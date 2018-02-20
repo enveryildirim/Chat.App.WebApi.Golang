@@ -1,0 +1,414 @@
+<html>
+  <head>
+    <title>Profil Test  Sayfası</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="js/jquery-1.12.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript">
+    $.fn.serializeObject = function(){
+          var o = {};
+          var a = this.serializeArray();
+          $.each(a, function() {
+              if (o[this.name] !== undefined) {
+                  if (!o[this.name].push) {
+                      o[this.name] = [o[this.name]];
+                  }
+                  o[this.name].push(this.value || '');
+              } else {
+                  o[this.name] = this.value || '';
+              }
+          });
+          return o;
+      };
+
+      $(document).ready(ProfilGetir);
+
+
+    		function ProfilGetir() {
+    			//document.getElementById("#txt_meslek").value = "Johnny Bravo";
+		  	
+	
+		  	var profil=sessionStorage.getItem("data");
+		  	alert("sadasd");
+		  	alert(profil);
+		  	if(profil==null){
+
+		  		window.location.href = "Login.html";
+		  	
+		  	}else{
+		  		Yukle(profil);
+		  	 }
+		    // Yukle(profil); 
+		  	
+    		};
+    		function YenidenYukle(arg) {
+    			$.ajax({
+		             url: 'http://127.0.0.1:8080/user/get',
+		             data:'{"id":"'+arg+'"}',
+		             error: function(err) {
+		                $('#info').html('<p>An error has occurred</p>'+err);
+		             },
+		             dataType: 'json',
+		             success: function(data) {
+		              Yukle(JSON.stringify(data));
+		             },
+		             type: 'POST'
+		          });
+    		}
+    		function Yukle(arg) {
+    			//alert(arg.adsoyad);
+    			var temp=JSON.parse(arg);
+    			$("#home").html(JSON.stringify(arg));
+    			alert(JSON.stringify(temp));
+    			$("#txt_ad").val(temp.profil.adsoyad);
+    			$("#kayit_dt").val(temp.profil.dtarihi);
+    			$("#txt_meslek").val(temp.profil.meslek);
+    			$("#kayit_diller").val(temp.profil.anadil.ad);
+    			$("#kayit_ulkeler").val(temp.profil.ulke);
+    			$("#kayit_sehir").val(temp.profil.sehir);
+    			$("#txt_amac").val(temp.profil.amac);
+    			$("#txt_hakkimda").val(temp.profil.hakkinda);
+    			$("#txt_hobiler").val(temp.profil.hobiler);
+    		}
+
+
+    		function Guncelle() {
+    			var datas=JSON.stringify($('#form_profile').serializeObject());
+    			alert(datas);
+    			var data=$('#form_profile').serializeObject();
+    			var profil =JSON.parse(sessionStorage.getItem("data"));
+
+    			data.id=profil.id;
+    			data.anadil=JSON.parse('{"id": "","ad": "'+data.dil+'","resimurl": ""}');
+    			
+		  		alert(JSON.stringify(data));
+		     $.ajax({
+		             url: 'http://127.0.0.1:8080/user/update',
+		             data:JSON.stringify(data),
+		             error: function() {
+		                alert('<p>An error has occurred</p>');
+		             },
+		             dataType: 'json',
+		             success: function(res) {
+		              alert(JSON.stringify(res));
+		             },
+		             type:'POST'
+		          });
+    		};
+    </script>
+  </head>
+  <body>
+  <!--
+  Profil struct {
+		Id       bson.ObjectId `json:"id" bson:"_id"`
+		AdSoyad  string        `json:"adsoyad" bson:"adsoyad"`
+		Yas      int           `json:"yas" bson:"yas"`
+		Meslek   string        `json:"meslek" bson:"meslek"`
+		Aciklama string        `json:"aciklama" bson:"aciklama"`
+		Resimurl string        `json:"resimurl" bson:"resimurl"`
+		//diller   []DilInfo			`json:"diller" bson:"diller"`
+		Anadil      Dil      `json:"anadil" bson:"anadil"`
+		Ogr_diller  []Dil    `json:"odiller" bson:"odiller"`
+		Biln_diller []Dil    `json:"bdiller" bson:"bdiller"`
+		Ulke        string   `json:"ulke" bson:"ulke"`
+		Sehir       string   `json:"sehir" bson:"sehir"`
+		Hobiler     string   `json:"hobiler" bson:"hobiler"`
+		Arkadaslar  []Profil `json:"arkadaslar" bson:"arkadaslar"`
+		Hakkinda    string   `json:"hakkinda" bson:"hakkinda"`
+		Amac        string   `json:"amac" bson:"amac"`
+		Cinsiyet    string   `json:"cinsiyet" bson:"cinsiyet"`
+		Dogumtarihi string   `json:"dtarihi" bson:"dtarihi"`
+	}
+  -->
+  
+  <div class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">HelloTalk</a>
+        </div>
+        <div class="navbar-collapse collapse">
+      
+          <!-- Left nav -->
+          <ul class="nav navbar-nav navbar-right">
+          <!--Mesajlar -->
+          <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>  </a>
+
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+              </ul>
+          </li>
+          <!--Bildirimler -->
+          <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+              </ul>
+          </li>
+           
+          </ul>
+      
+          <!-- Right nav -->
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="#">Mesajlar</a></li>
+            <li><a href="#">Arkadaşlar</a></li>
+            <li><a href="#">Profil</a></li>
+          </ul>
+      
+        </div><!--/.nav-collapse -->
+      </div><!--/.container -->
+</div>
+  <div class="container-fluid">
+   
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+	    <li role="presentation" ><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Duvar</a></li>
+	    <li role="presentation" class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profil</a></li>
+	    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Uygulama&Uyelik Ayarları</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+	<div role="tabpanel" class="tab-pane" id="home">Görülen Kısım</div>
+
+    <div role="tabpanel" class="tab-pane active" id="profile">
+		   
+		  <div class="row">
+		    <!-- left column -->
+		    <div class="col-md-4 col-sm-6 col-xs-12">
+		      <div class="text-center">
+		        <img src="img/profil.png" class="avatar img-circle img-thumbnail" alt="avatar">
+		        <h6>Upload a different photo...</h6>
+		        <input type="file" class="text-center center-block well well-sm">
+		      </div>
+		    </div>
+		    <!-- edit form column -->
+		    <div class="col-md-8 col-sm-6 col-xs-12 personal-info">
+		      
+		      <h3>Profil Güncelleme</h3>
+		      <form class="form-horizontal" role="form" id="form_profile">
+		        <div class="form-group">
+		          <label class="col-lg-3 control-label">Ad Soyad:</label>
+		          <div class="col-lg-8">
+		            <input class="form-control" type="text" id="txt_ad" name="adsoyad" value="">
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-lg-3 control-label">Cinsiyet</label>
+		          <div class="col-lg-8">
+		            <label class="radio-inline">
+                          <input type="radio"  name="cinsiyet" id="kayit_cins_erkek" value="Erkek" checked> Erkek
+                        </label>
+                        <label class="radio-inline">
+                          <input type="radio"  name="cinsiyet" id="kayit_cins_kadin" value="Kadın"> Kadın
+                        </label>
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-lg-3 control-label">Doğum Tarihi</label>
+		          <div class="col-lg-8">
+		            <input type="date" class="form-control input-sm" id="kayit_dt" name="dtarihi" placeholder="Doğum Tarihi">
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-lg-3 control-label">Meslek</label>
+		          <div class="col-lg-8">
+		            <input class="form-control" id="txt_meslek" name="meslek" type="text">
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-lg-3 control-label">AnaDil</label>
+		          <div class="col-lg-8">
+		           <select class="form-control input-sm" name="dil" id="kayit_diller">
+                      <option>Ingilizce</option>
+                      <option>Arapca</option>
+                      <option>Turkce</option>
+                    </select>
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-lg-3 control-label">Ulke</label>
+		          <div class="col-lg-8">
+		             <select class="form-control input-sm" name="ulke" id="kayit_ulke">
+                        <option>Turkiye</option>
+                      </select>
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-lg-3 control-label">Şehir</label>
+		          <div class="col-lg-8">
+		            <div class="ui-select">
+		              <select id="kayit_sehir" name="sehir" class="form-control">
+		                <option value="Hawaii">(GMT-10:00) Hawaii</option>
+		                <option value="Alaska">(GMT-09:00) Alaska</option>
+		                <option value="Pacific Time (US &amp; Canada)">(GMT-08:00) Pacific Time (US &amp; Canada)</option>
+		                <option value="Arizona">(GMT-07:00) Arizona</option>
+		                <option value="Mountain Time (US &amp; Canada)">(GMT-07:00) Mountain Time (US &amp; Canada)</option>
+		                <option value="Central Time (US &amp; Canada)" selected="selected">(GMT-06:00) Central Time (US &amp; Canada)</option>
+		                <option value="Eastern Time (US &amp; Canada)">(GMT-05:00) Eastern Time (US &amp; Canada)</option>
+		                <option value="Indiana (East)">(GMT-05:00) Indiana (East)</option>
+		              </select>
+		            </div>
+		          </div>
+		        </div>
+		        <div class="form-group"><div class="divider"><h4>İletişim Bilgileri</h4></div></div>
+		        <div class="form-group">
+		          <label class="col-md-3 control-label">Tel:</label>
+		          <div class="col-md-8">
+		            <input class="form-control" id="txt_tel" name="tel" type="text">
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-md-3 control-label">Email:</label>
+		          <div class="col-md-8">
+		            <input class="form-control" id="txt_email" name="email" type="text">
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-md-3 control-label">Facebook:</label>
+		          <div class="col-md-8">
+		            <input class="form-control"  type="text">
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-md-3 control-label">Twitter:</label>
+		          <div class="col-md-8">
+		            <input class="form-control"  type="text">
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-md-3 control-label">Web Sitesi:</label>
+		          <div class="col-md-8">
+		            <input class="form-control"  type="text">
+		          </div>
+		        </div>
+		         <div class="form-group"><div class="divider"><h4>Hakkında</h4></div></div>
+		         <div class="form-group">
+		          <label class="col-md-3 control-label">Amaç:</label>
+		          <div class="col-md-8">
+		            <input class="form-control" id="txt_amac" name="amac"  type="text">
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-md-3 control-label">Hobiler:</label>
+		          <div class="col-md-8">
+		            <input class="form-control" id="txt_hobiler" name="hobiler"  type="text">
+		          </div>
+		        </div>
+		        <div class="form-group">
+		          <label class="col-md-3 control-label">Hakkımda:</label>
+		          <div class="col-md-8">
+		            <input class="form-control" id="txt_hakkimda" name="hakkinda" type="text">
+		          </div>
+		        </div>
+
+
+
+		        <div class="form-group">
+		          <label class="col-md-3 control-label"></label>
+		          <div class="col-md-8">
+		            <input class="btn btn-primary" value="Değişiklikleri Kaydet" type="button" onclick="Guncelle()">
+		            <span></span>
+		            <input class="btn btn-default" value="İptal" type="reset">
+		          </div>
+		        </div>
+		      </form>
+		    </div>
+		  </div>
+
+    </div>
+    
+    <div role="tabpanel" class="tab-pane" id="settings">
+    	
+		    
+		    <div class="center-block">
+		      <h3>Uygulama Ayarları</h3>
+		      <form class="form-horizontal" role="form">
+			        <div class="form-group">
+			          <label class="col-lg-3 control-label">Profilimi Kimler Görebilir</label>
+			          <div class="col-lg-8">
+			            <div class="ui-select">
+			              <select id="user_setting_profil" class="form-control">
+			                <option value="Herkes">Herkes</option>
+			                <option value="Arkadaslarım">Arkadaslarım</option>
+			                <option value="Hiç Kimse">Hiç Kimse</option>
+			              </select>
+			            </div>
+			          </div>
+			        </div>
+			        <div class="form-group">
+			          <label class="col-lg-3 control-label">Bana Mesaj Kimler Göndersin</label>
+			          <div class="col-lg-8">
+			            <div class="ui-select">
+			              <select id="user_setting_mesaj" class="form-control">
+			                <option value="Herkes">Herkes</option>
+			                <option value="Arkadaslarım">Arkadaslarım</option>
+			                <option value="Hiç Kimse">Hiç Kimse</option>
+			              </select>
+			            </div>
+			          </div>
+			        </div>
+			        <div class="form-group">
+			          <label class="col-md-3 control-label"></label>
+			          <div class="col-md-8">
+			            <input class="btn btn-primary" value="Değişiklikleri Kaydet" type="button">
+			            <span></span>
+			            <input class="btn btn-warning" value="Varsayılan Değerleri Yukle" type="reset">
+			          </div>
+			        </div>
+		      </form>
+		      <div class="panel panel-default">
+		      	<div class="panel-heading">
+		      		<h4>Kara Liste</h4>
+		      	</div>
+		      	<div class="panel-body">
+		      		<div>
+		      			<input class="form-control" placeholder="İsim" type="text">
+		      			<input class="btn btn-primary" value="Ara" type="button">
+		      		</div>
+		      		<div class="list-gruop">
+		      			<li class="list-group-item">
+					        <button class="btn btn-primary badge">Kaldır</button>
+					        <img src="img/a.png" class="img-responsive img-circle pull-left" alt="Responsive image" width="25" height="20">
+					         <p class="list-group-item-heading">Enes Ala</p>
+
+					    </li>
+		      		</div>
+		      	</div>
+		      </div>
+		      
+		    </div>
+		  
+    </div>
+  </div>
+
+</div>
+
+    
+  </body>
+</html>
+
+

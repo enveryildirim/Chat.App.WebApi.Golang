@@ -1,0 +1,254 @@
+<html>
+  <head>
+    <title>Giriş Test  Sayfası</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="js/jquery-1.12.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript">
+    $.fn.serializeObject = function()
+      {
+          var o = {};
+          var a = this.serializeArray();
+          $.each(a, function() {
+              if (o[this.name] !== undefined) {
+                  if (!o[this.name].push) {
+                      o[this.name] = [o[this.name]];
+                  }
+                  o[this.name].push(this.value || '');
+              } else {
+                  o[this.name] = this.value || '';
+              }
+          });
+          return o;
+      };
+
+      function ValidateForm() {
+        var a=true;
+            /*var ad = document.forms["form-kayit"]["kayit_ad"].value;
+            if (ad == null || ad == "") {
+                alert("İsim Giriniz");
+                a=false;
+            }*/
+            var email = document.forms["form-kayit"]["kayit_email"].value;
+            var aa=EmailKontrol(email);
+            if(!aa){
+              alert("email kullanılmıs sıkıntı var");
+              a=false;
+            }
+            alert("email kullanılabilir ");
+            return a;
+        };
+        
+        function EmailKontrol(arg) {
+          var deger='{"email":"'+arg+'"}';
+           var durum=true;
+          $.ajax({
+                     url: 'http://127.0.0.1:8080/user/email',
+                     data:deger,
+                     error: function(err) {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                        alert("Hata: "+err);
+                     },
+                     dataType: 'json',
+                     success: function(re) {
+                      var tmp=JSON.stringify(re);
+                      $("#demo").html(re);
+                     
+                      if(tmp!="0"){
+                        durum=false;
+                        
+                      }
+                     
+                      return durum;
+                     },
+                     type: 'POST'
+                  });
+         return durum;
+          
+        }
+        function Kaydet() {
+          var data =JSON.stringify($('#form-kayit').serializeObject());
+          $('#demo').text(data);
+          if(!ValidateForm()){
+            return;
+          }
+
+          
+           $.ajax({
+                     url: 'http://127.0.0.1:8080/user/create',
+                     data:data,
+                     error: function() {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                     },
+                     dataType: 'json',
+                     success: function(re) {
+                      var tmp=JSON.stringify(re);
+                      $("#demo").html(tmp);
+                      alert("basarılı");
+                      window.location.href="profil.html";
+                     },
+                     type: 'POST'
+                  });
+            
+        
+          };
+
+          function Login(){
+            var data =JSON.stringify($('#form-login').serializeObject());
+            $('#demo').text(data);
+            alert(data);
+            $.ajax({
+                     url: 'http://127.0.0.1:8080/user/login',
+                     data:data,
+                     error: function() {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                     },
+                     dataType: 'json',
+                     success: function(res) {
+                      var tmp=JSON.stringify(res);
+                      $("#demo").html(tmp);
+                      alert("basarılı");
+                      sessionStorage.setItem("data", tmp);
+                      
+                      window.location.href = "profil.html";
+                     },
+                     type: 'POST'
+                  });
+
+          };
+          function Y() {
+          window.location.href = "profil.html";
+          };
+    </script>
+  </head>
+  <body>
+
+  	<div class="navbar navbar-default navbar-static-top" role="navigation">
+		  <div class="container">
+		    <div class="navbar-header">
+		      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		        <span class="sr-only">Toggle navigation</span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		      </button>
+		      <a class="navbar-brand" href="#">HelloTalk</a>
+		    </div>
+		  
+		  </div><!--/.container -->
+</div>
+<!--
+
+-->
+
+
+  <div class="container-fluid">
+  <h2>Form Kontrolleri Yapılamamıştır!!!!!</h2>
+  <div class="row" id="demo"></div>
+      <div class="col-lg-8">
+      <div class="col-lg-6"> 
+        <form id="form-kayit">
+
+                 <div class="form-group">
+                    <label for="kayit_ad">Ad Soyad</label>
+                    <input type="text" class="form-control input-sm" id="kayit_ad" name="adsoyad" placeholder="Ad Soyad">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="kayit_email">Email</label>
+                    <input type="email" class="form-control input-sm" id="kayit_email" name="email" placeholder="Email">
+                  </div>
+                  <div class="form-group">
+                    <label for="kayit_pass">Şifre</label>
+                    <input type="password" class="form-control input-sm" id="kayit_pass" name="sifre" placeholder="Şifre">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="kayit_passt">Şifre Tekrar</label>
+                    <input type="password" class="form-control input-sm" id="kayit_passt"  placeholder="Şifre  Tekrar">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="kayit_dt">Doğum Tarihi</label>
+                    <input type="date" class="form-control input-sm" id="kayit_dt" name="dtarihi" placeholder="Doğum Tarihi">
+                  </div>
+
+
+                  <div class="form-group">
+                  <label>Cinsiyet</label><br>
+                        <label class="radio-inline">
+                          <input type="radio"  name="cinsiyet" id="kayit_cins_erkek" value="Erkek" checked> Erkek
+                        </label>
+                        <label class="radio-inline">
+                          <input type="radio"  name="cinsiyet" id="kayit_cins_kadin" value="Kadın"> Kadın
+                        </label>
+                  </div>
+                <div class="form-group">
+                <label for="kayit_diller">AnaDil</label>
+                    <select class="form-control input-sm" name="anadil" id="kayit_diller">
+                      <option>Ingilizce</option>
+                      <option>Arapca</option>
+                      <option>Turkce</option>
+                    </select>
+                </div>
+                <div>
+                    <form class="form-inline">
+                        <div class="form-gruop">
+                            <label for="kayit_ulke">Ülke</label>
+                            <select class="form-control input-sm" name="ulke" id="kayit_ulke">
+                              <option>Turkiye</option>
+                            </select>
+                        </div>
+                         <div class="form-gruop">
+                            <label for="kayit_iller">İl</label>
+                            <select class="form-control input-sm" name="il" id="kayit_iller">
+                              <option>Konya</option>
+                              <option>Istanbul</option>
+                              <option>Ankara</option>
+                              <option>Izmir</option>
+                              <option>Bursa</option>
+                            </select>
+                        </div>
+                         
+                  <div class="form-group">
+                    <label for="kayit_presim">Profil Resmi</label>
+                    <input type="file" class="form-control input-sm" name="presim" id="kayit_presim" placeholder="Profil Resmi">
+                  </div>
+                    </form>
+                </div>
+                <div class="form-group"> 
+                  <button type="submit" class="btn btn-default" id="btn_kayit" onclick="Kaydet()">Kayıt Ol</button>
+                </div>
+            </form>
+      </div>
+      </div>
+      <div class="col-lg-4">
+          <form id="form-login">
+                  <div class="form-group">
+                    <label for="login_email">Email</label>
+                    <input type="email" class="form-control input-lg" id="login_email" name="email" placeholder="Email">
+                  </div>
+                  <div class="form-group">
+                    <label for="login_sifre">Password</label>
+                    <input type="password" class="form-control input-lg" id="login_sifre" name="sifre" placeholder="Password">
+                  </div>
+                    <div class="checkbox">
+                         <label>
+                           <input type="checkbox"> Beni Hatırla !!
+                         </label>
+                  </div>
+                  <button type="button" class="btn btn-default" id="btn_login" onclick="Login()">Login</button>
+            </form>
+      </div>
+  </div>
+  </body>
+  </html>

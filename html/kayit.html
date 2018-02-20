@@ -1,0 +1,142 @@
+<html>
+  <head>
+    <title>Kayıt  Sayfası</title>
+    <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="js/jquery-1.12.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script>
+    $.fn.serializeObject = function()
+      {
+          var o = {};
+          var a = this.serializeArray();
+          $.each(a, function() {
+              if (o[this.name] !== undefined) {
+                  if (!o[this.name].push) {
+                      o[this.name] = [o[this.name]];
+                  }
+                  o[this.name].push(this.value || '');
+              } else {
+                  o[this.name] = this.value || '';
+              }
+          });
+          return o;
+      };
+    $(document).ready(function(){
+      $.ajax({
+             url: 'http://127.0.0.1:8080/user/all',
+             data: {
+                format: 'json'
+             },
+             error: function() {
+                $('#info').html('<p>An error has occurred</p>');
+             },
+             dataType: 'json',
+             success: function(data) {
+              $('#demo').text(JSON.stringify($('#form').serializeObject()));
+             },
+             type: 'GET'
+          });
+          //Kayıt Formu İşlemleri
+          $('#btn').click(
+            function (){
+              var deger=JSON.stringify($('#form').serializeObject());
+              $("#sonuc").text(deger);
+
+              $.ajax({
+                     url: 'http://127.0.0.1:8080/user/deneme',
+                     data:deger,
+                     error: function() {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                     },
+                     dataType: 'json',
+                     success: function(re) {
+                      var tmp=JSON.stringify(re);
+                      //$("#sonuc").text(tmp);
+                      alert("basarılı");
+                     },
+                     type: 'POST'
+                  });
+            }
+          );
+
+        /*  $("#formlogin").submit(
+            function (){
+              var deger=JSON.stringify($('#formlogin').serializeObject());
+              alert(deger);
+              $.ajax({
+                     url: 'http://127.0.0.1:8080/user/login',
+                     data:deger,
+                     error: function() {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                     },
+                     dataType: 'json',
+                     success: function(data) {
+                      var tmp=JSON.stringify(data);
+                      $('#demo').text(data.name+"---"+data.id);
+                      $("#sonuc").text(tmp);
+                      $("#sonuc").text(deger);
+                      alert("basarılı");
+                     },
+                     type: 'POST'
+                  });
+            }
+          );*/
+
+  });
+    </script>
+  </head>
+
+  <body>
+    <p id="demo"></p>
+
+
+
+<div class="container">
+     <form id="form">
+      İsim:<br>
+      <input type="text" name="isim"><br>
+      Email:<br>
+      <input type="text" name="email"><br>
+      Sifre:<br>
+      <input type="text" name="sifre"><br>
+      Sifre Tekrar:<br>
+      <input type="text"><br>
+      Dogum Tarihi:<br>
+      <input type="date" name="dtarihi"><br>
+      Resim:<br>
+      <input type="file" name="file"><br>
+      Cinsiyet:<br>
+      <input type="radio" name="cinsiyet" value="Erkek" checked> ErkeK<br>
+      <input type="radio" name="cinsiyet" value="Kadın"> Kadın<br><br>
+	<select name="dil">
+	  <option value="Bos" selected>Boston</option>
+	  <option value="Cam">Cambridge</option>
+	</select>
+      <input type="submit" name="kayit" value="Kayıt Ol" />
+	
+     </form>
+     <button type="button" name="btn" id="btn">Tıkla</button>
+     <div  id="sonuc"></div>
+
+  <br>
+    <!--  <form id="formlogin">
+       Email:<br>
+       <input type="text" name="email"><br>
+       Sifre:<br>
+       <input type="text" name="sifre"><br>
+
+      <input type="submit" value="Giriş" />
+    </form>-->
+    <div  id="sonuc"></div>
+    </div>
+  </body>
+</html>

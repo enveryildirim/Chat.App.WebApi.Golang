@@ -1,0 +1,377 @@
+<html>
+  <head>
+    <title>Mesajlaşma Sayfası</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="js/jquery-1.12.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <link rel="stylesheet" href="css/chat.css">
+    <script type="text/javascript">
+    
+    var gonderen='{"id":"56e905ed81340f1335eccedf"}';
+    var alici='{"id":"56e905d081340f1335eccede"}';
+  $.fn.serializeObject = function(){
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+
+      $(document).ready(function() {
+          //GorusmeleriYukle("asd");
+          MesajlariYukle("asd");
+      });
+      function Gonder(arg) {
+        //alert($('#txt_mesaj').val());
+        //"id":"","uye":{"id":""},
+        var tmp='{"gonderen":{"id":"56e905ed81340f1335eccedf"},"mesaj":"'+$('#txt_mesaj').val()+'","tarih":"'+new Date().toLocaleString()+'"}';
+        alert(tmp);
+        $.ajax({
+                       url: 'http://127.0.0.1:8080/mesaj/gonder',
+                       data:tmp,
+                       error: function() {
+                          $('#demo').html('<p>Hata Oluştu</p>');
+                       },
+                       dataType: 'json',
+                       success: function(res) {
+                        data=res;
+                       },
+                       type: 'POST'
+                    });
+
+      };
+
+      function MesajlariYukle(arg) {
+        var data;        
+        var durum=true;
+        var item="";
+        $.ajax({
+                       url: 'http://127.0.0.1:8080/mesaj/all',
+                       data:gonderen,
+                       error: function() {
+                          alert("hata");
+                       },
+                       dataType: 'json',
+                       success: function(res) {
+                        data=res;
+                        alert(res);
+                       },
+                       type: 'POST'
+                    });
+        
+        if(data==null)
+        {
+          alert("veri yok");
+
+        }
+        for(var k in data){
+          if(durum){
+            item='<li class="left clearfix"><span class="chat-img pull-left">'+
+                            '<img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />'+
+                        '</span>'+
+                            '<div class="chat-body clearfix">'+
+                                '<div class="header">'+
+                                    '<strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted">'+
+                                        '<span class="glyphicon glyphicon-time"></span>12 mins ago</small>'+
+                                '</div>'+
+                                '<p>----'+data[k]+
+                                    '----Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare'+
+                                    'dolor, quis ullamcorper ligula sodales.'+
+                                '</p>'+
+                            '</div>'+
+                        '</li>';
+
+                        
+          }
+          else{
+             item='<li class="right clearfix"><span class="chat-img pull-right">'+
+                            '<img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />'+
+                        '</span>'+
+                            '<div class="chat-body clearfix">'+
+                                '<div class="header">'+
+                                    '<strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted">'+
+                                        '<span class="glyphicon glyphicon-time"></span>12 mins ago</small>'+
+                                '</div>'+
+                                '<p>'+data[k]+
+                                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare'+
+                                    'dolor, quis ullamcorper ligula sodales.'+
+                                '</p>'+
+                            '</div>'+
+                        '</li>';
+
+          }
+          $("#list_mesajlar").append(item);
+        }
+
+      };
+
+      function GorusmeleriYukle(arg) {
+        //servere istekler
+        var data;
+        $.ajax({
+                       url: 'http://127.0.0.1:8080//mesaj',
+                       data:'{"id":"56e9059081340f1335eccedd"}',
+                       error: function() {
+                          $('#demo').html('<p>Hata Oluştu</p>');
+                       },
+                       dataType: 'json',
+                       success: function(res) {
+                        data=res;
+                        
+                       },
+                       type: 'POST'
+                    });
+        for(var k in data) {
+            var item='<a href="#" class="list-group-item">'+
+        '<span class="badge">14</span>'+
+        '<img src="img/a.png" class="img-responsive img-circle pull-left" alt="Responsive image" width="25"'+
+        'height="20">'+
+         '<h4 class="list-group-item-heading">'+
+         data[k]+
+         '</h4></a>';
+  
+                    $("#list_gorusmeler").append(item);
+                    
+            }
+      };
+
+    </script>
+  </head>
+  <body>
+<div class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">HelloTalk</a>
+        </div>
+        <div class="navbar-collapse collapse">
+      
+          <!-- Left nav -->
+          <ul class="nav navbar-nav navbar-right">
+          <!--Mesajlar -->
+          <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>  </a>
+
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+              </ul>
+          </li>
+          <!--Bildirimler -->
+          <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+              </ul>
+          </li>
+           
+          </ul>
+      
+          <!-- Right nav -->
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="#">Mesajlar</a></li>
+            <li><a href="#">Arkadaşlar</a></li>
+            <li><a href="#">Profil</a></li>
+          </ul>
+      
+        </div><!--/.nav-collapse -->
+      </div><!--/.container -->
+</div>
+<div class="container-fluid">
+     
+   <div class="col-lg-3">
+   <button type="button" class="btn btn-success btn-lg btn-block"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>-Yeni Mesaj </button>
+   <hr>
+   	<div class="list-group" id="list_gorusmeler">
+		  <!--<a href="#" class="list-group-item active">
+        <span class="badge">14</span>
+        <img src="img/a.png" class="img-responsive img-circle pull-left" alt="Responsive image" width="25" height="20">
+         <h4 class="list-group-item-heading">Leyla Ala</h4>
+      </a>
+      <a href="#" class="list-group-item">
+        <span class="badge">14</span>
+        <img src="img/a.png" class="img-responsive img-circle pull-left" alt="Responsive image" width="25" height="20">
+         <h4 class="list-group-item-heading">Leyla Ala</h4>
+      </a>
+      <a href="#" class="list-group-item">
+        <span class="badge">14</span>
+        <img src="img/a.png" class="img-responsive img-circle pull-left" alt="Responsive image" width="25" height="20">
+         <h4 class="list-group-item-heading">Leyla Ala</h4>
+      </a>
+      <a href="#" class="list-group-item">
+        <span class="badge">14</span>
+        <img src="img/a.png" class="img-responsive img-circle pull-left" alt="Responsive image" width="25" height="20">
+         <h4 class="list-group-item-heading">Leyla Ala</h4>
+      </a>
+		  -->
+	</div>
+
+
+   </div>
+   <div class="col-lg-9">
+         <div class="panel panel-default">
+          
+            <div class="panel-body">
+                    <ul class="chat" id="list_mesajlar">
+                        <li class="left clearfix"><span class="chat-img pull-left">
+                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted">
+                                        <span class="glyphicon glyphicon-time"></span>12 mins ago</small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="left clearfix"><span class="chat-img pull-left">
+                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted">
+                                        <span class="glyphicon glyphicon-time"></span>12 mins ago</small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="left clearfix"><span class="chat-img pull-left">
+                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted">
+                                        <span class="glyphicon glyphicon-time"></span>12 mins ago</small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="right clearfix"><span class="chat-img pull-right">
+                            <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins ago</small>
+                                    <strong class="pull-right primary-font">Bhaumik Patel</strong>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="right clearfix"><span class="chat-img pull-right">
+                            <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins ago</small>
+                                    <strong class="pull-right primary-font">Bhaumik Patel</strong>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="right clearfix"><span class="chat-img pull-right">
+                            <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins ago</small>
+                                    <strong class="pull-right primary-font">Bhaumik Patel</strong>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+
+                        <li class="left clearfix"><span class="chat-img pull-left">
+                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Jack Sparrow</strong> <small class="pull-right text-muted">
+                                        <span class="glyphicon glyphicon-time"></span>14 mins ago</small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="right clearfix"><span class="chat-img pull-right">
+                            <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>15 mins ago</small>
+                                    <strong class="pull-right primary-font">Bhaumik Patel</strong>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="txt_mesaj" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+                        <span class="input-group-btn">
+                            <button class="btn btn-warning btn-sm" id="btn-chat" onclick="Gonder('sdf');">
+                                Gönder</button>
+                        </span>
+                    </div>
+                </div>
+          
+         </div>
+   </div>
+
+  
+ </div>
+  </body>
+</html>

@@ -1,0 +1,122 @@
+<html>
+  <head>
+    <title>Dilller  Sayfası</title>
+    <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="js/jquery-1.12.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script>
+    $.fn.serializeObject = function()
+      {
+          var o = {};
+          var a = this.serializeArray();
+          $.each(a, function() {
+              if (o[this.name] !== undefined) {
+                  if (!o[this.name].push) {
+                      o[this.name] = [o[this.name]];
+                  }
+                  o[this.name].push(this.value || '');
+              } else {
+                  o[this.name] = this.value || '';
+              }
+          });
+          return o;
+      };
+
+    $(document).ready(function(){
+      $.ajax({
+             url: 'http://127.0.0.1:8080/dil/all',
+             data: {
+                format: 'json'
+             },
+             error: function() {
+                $('#info').html('<p>An error has occurred</p>');
+             },
+             dataType: 'json',
+             success: function(data) {
+			        for (var i = 0; i < data.length; i++) {
+                var yeni =document.createElement("option");
+			          yeni.text=data[i].ad;
+                yeni.value=JSON.stringify(data[i]);
+                document.getElementById("dil").add(yeni);
+			        }
+             },
+             type: 'GET'
+          });
+
+          //Kayıt Formu İşlemleri
+          $('#btn').click(
+            function (){
+              var deger=JSON.stringify($('#form').serializeObject());
+              $("#sonuc").text(deger);
+
+              $.ajax({
+                     url: 'http://127.0.0.1:8080/dil/create',
+                     data:deger,
+                     error: function() {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                     },
+                     dataType: 'json',
+                     success: function(re) {
+                      var tmp=JSON.stringify(re);
+                      //$("#sonuc").text(tmp);
+                      alert("basarılı");
+                     },
+                     type: 'POST'
+                  });
+            }
+          );
+
+          //Silme işlemleri
+          $('#btnsil').click(
+            function (){
+              var deger= document.getElementById("dil");
+              var s = deger.options[deger.selectedIndex].value;
+              $('#sonuc').text(s);
+              $.ajax({
+                     url: 'http://127.0.0.1:8080/dil/delete',
+                     data:s,
+                     dataType: 'json',
+                     error: function() {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                     },
+                     success: function(re) {
+                      alert("basarılı");
+                     },
+                     type: 'DELETE'
+                  });
+            }
+          );
+
+
+  });
+    </script>
+  </head>
+
+  <body>
+
+<div class="container">
+     <form id="form">
+      İsim:<br>
+      <input type="text" name="ad"><br>
+      resimurl:<br>
+      <input type="text" name="resimurl"><br>
+     </form>
+     <button type="button" name="btn" id="btn">Eklee</button>
+
+  <br><h1>Diller</h1>
+ <select id="dil">
+	</select>
+    <div  id="sonuc"></div>
+    <button type="button" name="btnsil" id="btnsil">Sil</button>
+    </div>
+  </body>
+</html>

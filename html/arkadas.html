@@ -1,0 +1,563 @@
+<html>
+  <head>
+    <title>Arkadaslar Test  Sayfası</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="js/jquery-1.12.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript">
+    $.fn.serializeObject = function(){
+          var o = {};
+          var a = this.serializeArray();
+          $.each(a, function() {
+              if (o[this.name] !== undefined) {
+                  if (!o[this.name].push) {
+                      o[this.name] = [o[this.name]];
+                  }
+                  o[this.name].push(this.value || '');
+              } else {
+                  o[this.name] = this.value || '';
+              }
+          });
+          return o;
+      };
+      var data;
+
+      $(document).ready(function() {
+      	//alert("sayfa yuklendi");
+
+		      	var profil =JSON.parse(sessionStorage.getItem("data"));
+		      	if(profil==null){
+		      		window.location.href="Login.html";
+		      	}else{
+		      		ArkadaslarimiYukle(profil.arkadaslar);
+		      		ArkadaslarDiger();
+		      		IsteklerimiYukle();
+
+		      	}
+		    
+      	
+		});
+
+      function ArkadaslarYenidenYukle(arg) {
+
+      	$.ajax({
+	                     url: 'http://127.0.0.1:8080/user/arkadas/all',
+	                     data:'{"id":"'+profil.id+'"}',
+	                     error: function() {
+	                        $('#demo').html('<p>Hata Oluştu</p>');
+	                     },
+	                     dataType: 'json',
+	                     success: function(res) {
+	                      data=res;
+	                      //alert(JSON.stringify(data));
+	                      ArkadaslarimiYukle();
+	                      
+	                     },
+	                     type: 'POST'
+	                  });
+      	// body...
+      }
+    		function ArkadaslarimiYukle(data) {
+    			if(data==null){
+    				alert("arkadas yok");
+    			}
+    			for(var k in data) {
+					  var item='<li class="list-group-item">'+
+							  '<div class="media">'+
+							    '<div class="media-left">'+
+							      '<a href="#">'+
+							        '<img class="media-object" src="img/a.png" alt="...">'+
+							      '</a>'+
+							    '</div>'+
+							    '<div class="media-body">'+
+							      '<h4 class="media-heading">'+data[k].adsoyad+
+							      '</h4>'+
+							      '...'+
+							      '<div class="pull-right">'+
+							      
+										'<button type="button" class="btn btn-primary" onclick="MesajAt('+"'"+data[k].id+"'"+');">Mesaj At</button>'+
+										'<button type="button" class="btn btn-danger" onclick="ArkadasCikar('+"'"+data[k].id+"'"+');">Çıkar</button>'+
+										'<button type="button" class="btn btn-info">Şikayet</button>'+
+							      '</div>'+
+							    '</div>'+
+							  '</div>'+
+					  '</li>';
+					  //alert(item);
+		                $("#list_arkadaslarim").append(item);
+		                
+						}
+		        
+    		};
+    		function IsteklerimiYukle() {
+    			var profil=JSON.parse(sessionStorage.getItem("data"));
+    			
+    			$.ajax({
+	                     url: 'http://127.0.0.1:8080/user/arkadas/istekler',
+	                     data:'{"id":"'+profil.id+'"}',
+	                     error: function() {
+	                        $('#demo').html('<p>Hata Oluştu</p>');
+	                     },
+	                     dataType: 'json',
+	                     success: function(res) {
+	                      var aa=JSON.stringify(res);
+	                      var bb=JSON.parse(aa);
+	                      IstekleriYEkranaYukle(bb);
+	                     },
+	                     type: 'POST'
+	                  });
+
+    			
+    		};
+    		function IstekleriYEkranaYukle(data){
+    			if(data==null){
+    				alert("istek yok");
+    			}
+    			for(var k in data) {
+					  var item='<li class="list-group-item">'+
+							  '<div class="media">'+
+							    '<div class="media-left">'+
+							      '<a href="#">'+
+							        '<img class="media-object" src="img/a.png" alt="...">'+
+							      '</a>'+
+							    '</div>'+
+							    '<div class="media-body">'+
+							      '<h4 class="media-heading">'+data[k].alici.adsoyad+
+							      '</h4>'+
+							      '...'+
+							      '<div class="pull-right">'+
+							      
+										'<button type="button" class="btn btn-primary" onclick="ArkadasOnayla('+"'"+data[k].id+"'"+');">Onayla</button>'+
+										'<button type="button" class="btn btn-danger" onclick="ArkadasCikar('+"'"+data[k].alici.id+"'"+');">Sil</button>'+
+										
+							      '</div>'+
+							    '</div>'+
+							  '</div>'+
+					  '</li>';
+					  //alert(item);
+		                $("#list_istekler").append(item);
+		                
+						}
+		        
+    		}
+    		function yukle(arg) {
+    			//var uyeList = document.getElementById('list_uyeler');
+    		
+    			for(var k in arg) {
+    				alert("Basarılı");
+					  $('#template').clone().attr('id','')
+		                .find('.list-group-item').html(arg[k].adsoyad).end()
+		                .appendTo('#list_uyeler');
+					}
+				
+    		};
+
+    		function SonuclariYukle(arg) {
+    			$('#list_uyeler').empty();
+    			
+    			for(var k in arg) {
+    				
+    				if(!ArkadaslariCikarbyGetAll(arg[k])){
+    					
+					  var item='<li class="list-group-item">'+
+							  '<div class="media">'+
+							    '<div class="media-left">'+
+							      '<a href="#">'+
+							        '<img class="media-object" src="img/a.png" alt="...">'+
+							      '</a>'+
+							    '</div>'+
+							    '<div class="media-body">'+
+							      '<h4 class="media-heading">'+arg[k].adsoyad+
+							      '</h4>'+
+							      '...'+
+							      '<div class="pull-right">'+
+							      
+										'<button type="button" class="btn btn-primary" onclick="ArkadasEkle('+"'"+arg[k].id+"'"+');">Ekle</button>'+
+										'<button type="button" class="btn btn-success">Mesaj</button>'+
+										'<button type="button" class="btn btn-info">Şikayet</button>'+
+							      '</div>'+
+							    '</div>'+
+							  '</div>'+
+					  '</li>';
+					  //alert(item);
+		                $("#list_uyeler").append(item);
+		                
+						}
+    			}
+    		}
+    		function ArkadaslarDiger() {
+    			$.ajax({
+                     url: 'http://127.0.0.1:8080/user/all',
+                     //data:'{"email": "enver09@hotmail.com"}',
+                     error: function() {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                     },
+                     dataType: 'json',
+                     success: function(res) {
+                      var tmp=JSON.stringify(res);
+                      var datas=JSON.parse(tmp);
+                      //$("#demo").html(tmp);
+                      SonuclariYukle(datas);
+						
+						
+                     },
+                     type: 'GET'
+                  });
+    		};
+    		function ArkadaslariCikarbyGetAll(arg) {
+    			var profil=JSON.parse(sessionStorage.getItem("data"));
+    			var durum=false;
+    			console.log(profil.arkadaslar);
+    			
+    			for(var k in profil.arkadaslar) {
+    				
+    				if(arg.id==k.id)
+    				{
+    					durum=true;
+    					break;
+    				}
+    			}
+    			if(arg.id==profil.id){
+    				durum=true;
+    			}
+
+    			return durum;
+    		}
+    		function ArkadasEkle(arg) {
+    			//alert(arg);
+    			var profil=JSON.parse(sessionStorage.getItem("data"));
+    			$.ajax({
+                     url: 'http://127.0.0.1:8080/user/arkadas/ekle',
+                     data:'{"id": "'+arg+'","email":"'+profil.id+'"}',
+                     error: function() {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                     },
+                     dataType: 'json',
+                     success: function(res) {
+                      var tmp=JSON.stringify(res);
+                      var datas=JSON.parse(tmp);
+                      Yukle();
+                     },
+                     type: 'POST'
+                  });
+
+    		};
+    		function ArkadasOnayla(arg) {
+    			//alert(arg);
+    			var profil=JSON.parse(sessionStorage.getItem("data"));
+    			$.ajax({
+                     url: 'http://127.0.0.1:8080/user/arkadas/onayla',
+                     data:'{"id":"'+profil.id+'","email": "'+arg+'"}',
+                     error: function(err) {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                        alert(err);
+                     },
+                     dataType: 'json',
+                     success: function() {
+                      Yukle();
+                     },
+                     type: 'POST'
+                  });
+
+    		};
+    		function ArkadasCikar(arg) {
+    			//alert(arg);
+    			$.ajax({
+                     url: 'http://127.0.0.1:8080/user/arkadas/delete',
+                     data:'{"id": "'+arg+'","email":"56e9059081340f1335eccedd"}',
+                     error: function() {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                     },
+                     dataType: 'json',
+                     success: function(res) {
+                      var tmp=JSON.stringify(res);
+                      var datas=JSON.parse(tmp);
+                      //$("#demo").html(tmp);
+                     },
+                     type: 'POST'
+                  });
+
+    		};
+    		
+    		function Arama() {
+    			var data=$('#form_arama').serializeObject();
+    			data.azyas=parseInt($('#select_azyas').val());
+    			data.cokyas=parseInt($('#select_cokyas').val());
+    			data.online=document.getElementById("chk_online").checked;
+    			var datas=JSON.stringify(data);
+    			console.log(datas);
+    			$.ajax({ 
+                     url: 'http://127.0.0.1:8080/user/arkadas/arama',
+                     data:datas,
+                     error: function() {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                     },
+                     dataType: 'json',
+                     success: function(res) {
+                      var tmp=JSON.stringify(res);
+                      var datas=JSON.parse(tmp);
+                      console.log(datas);
+                      SonuclariYukle(datas);
+                     },
+                     type: 'POST'
+                  });
+
+    		}
+    		function Yukle() {
+    				  YukleOtomatik();
+                      ArkadaslarimiYukle(profil.arkadaslar);
+		      		  ArkadaslarDiger();
+		      		  IsteklerimiYukle();
+    		}
+    		function YukleOtomatik() {
+    			var id=JSON.parse(sessionStorage.getItem("data"));
+    			$.ajax({
+                     url: 'http://127.0.0.1:8080/user/get',
+                     data:'{"id":"'+id.id+'"}',
+                     error: function() {
+                        $('#demo').html('<p>Hata Oluştu</p>');
+                     },
+                     dataType: 'json',
+                     success: function(res) {
+                      var tmp=JSON.stringify(res);
+                      alert("basarılı");
+                      sessionStorage.setItem("data", tmp);
+                      
+                      window.location.href = "profil.html";
+                     },
+                     type: 'POST'
+                  });
+    		}
+    </script>
+  
+  </head>
+  <body>
+
+  <div class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">HelloTalk</a>
+        </div>
+        <div class="navbar-collapse collapse">
+      
+          <!-- Left nav -->
+          <ul class="nav navbar-nav navbar-right">
+          <!--Mesajlar -->
+          <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>  </a>
+
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+              </ul>
+          </li>
+          <!--Bildirimler -->
+          <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+              </ul>
+          </li>
+           
+          </ul>
+      
+          <!-- Right nav -->
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="#">Mesajlar</a></li>
+            <li><a href="#">Arkadaşlar</a></li>
+            <li><a href="#">Profil</a></li>
+          </ul>
+      
+        </div><!--/.nav-collapse -->
+      </div><!--/.container -->
+</div>
+  <div class="container-fluid">
+   <div id="demo" class="row" ></div>
+    
+			<div>
+
+			  <!-- Nav tabs -->
+			  <ul class="nav nav-tabs" role="tablist">
+			    <li role="presentation" class="active"><a href="#arama" aria-controls="arama" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Arama</a></li>
+			    
+			    <li role="presentation"><a href="#arkadas" aria-controls="arkadas" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Arkadaslarım</a></li>
+			   
+			   <li role="presentation"><a href="#istekler" aria-controls="istekler" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> İstekler</a></li>
+			  </ul>
+
+			  <!-- Tab panes -->
+			  <div class="tab-content">
+			  <!--Arama -->
+			    <div role="tabpanel" class="tab-pane active" id="arama">
+				    <div class="row">
+				    	<div class="form">
+						    <div class="col-lg-5 col-md-offset-3">
+						    	<input class="form-control" type="text" placeholder="Arama">
+						  	</div>
+						  	<button type="submit" class="btn btn-default" id="btn_arama" onclick="Arama();">Arama Yap</button>
+						</div>
+				    </div>
+				    	
+				    <div class="col-lg-3">
+				    	<div class="panel panel-default">
+						  <div class="panel-heading">
+						    <h3 class="panel-title">Arama</h3>
+						  </div>
+						  <div class="panel-body">
+						   <!--Arama Kriterleri-->
+							   <form id="form_arama" class="form-inline" role="form">
+								   	<div class="form-group">
+								   	<label class="control-label">Yaş :</label>
+								   		<select class="form-control input-sm" name="azyas" id="select_azyas">
+										  <option>1</option>
+										  <option>2</option>
+										  <option>3</option>
+										  <option>4</option>
+										  <option>5</option>
+										</select>
+								   	</div>||
+								   	<div class="form-group">
+								   		<select class="form-control input-sm" name="cokyas" id="select_cokyas">
+										    <option value=1> 1</option>
+									        <option value=2> 2</option>
+									        <option value=3> 3</option>
+										</select>
+								   	</div>
+								   <br>
+								   <div class="form-group">
+								   	<label class="control-label">Online :</label>
+								   		<div class="checkbox">
+										  <label>
+										    <input type="checkbox" class="form-control" id="chk_online" value="true" name="online">
+										   
+										  </label>
+										</div>
+								   	</div><br>
+								   	<div class="form-group">
+								   	<label>Cinsiyet</label><br>
+				                        <label class="radio-inline">
+				                          <input type="radio"  name="cinsiyet" id="kayit_cins_erkek" value="Erkek" checked> Erkek
+				                        </label>
+				                        <label class="radio-inline">
+				                          <input type="radio"  name="cinsiyet" id="kayit_cins_kadin" value="Kadın"> Kadın
+				                        </label>
+								   	</div>
+
+								   	<div class="form-group">
+								   	<label class="control-label">Lokasyon :</label>
+								   		<select class="form-control input-sm" name="lokasyon">
+										  <option>1</option>
+										  <option>2</option>
+										  <option>3</option>
+										  <option>4</option>
+										  <option>5</option>
+										</select>
+										<button type="button" class="btn btn-success btn-xs">Ekle</button>
+										
+								   	</div>
+							   </form>
+						 </div>
+						</div>
+				    </div>
+
+				    <div class="col-lg-9">
+				    
+				    	<ul class="list-group" id="list_uyeler">
+						  
+						  
+						</ul>
+				    </div>
+			    </div>
+			    <!--Arama -->
+
+
+			    <!--Arkadaslarım -->
+			    <div role="tabpanel" class="tab-pane" id="arkadas">
+			    <div class="container">
+				   <ul class="list-group" id="list_arkadaslarim">
+					 <!-- 
+					  <li class="list-group-item">
+							  <div class="media">
+							    <div class="media-left">
+							      <a href="#">
+							        <img class="media-object" src="img/a.png" alt="...">
+							      </a>
+							    </div>
+							    <div class="media-body">
+							      <h4 class="media-heading">İsim Soyad</h4>
+							      ...
+							      <div class="pull-right">
+							      
+										<button type="button" class="btn btn-primary">Primary</button>
+										<button type="button" class="btn btn-success">Success</button>
+										<button type="button" class="btn btn-info">Info</button>
+							      </div>
+							    </div>
+							  </div>
+					  </li>-->
+					</ul>
+				</div>
+				</div>
+			    <!--Arkadaslarım -->
+
+			    <!--İstekler -->
+			    <div role="tabpanel" class="tab-pane" id="istekler">
+			    <div class="container">
+				   <ul class="list-group" id="list_istekler">
+					 <!-- 
+					  <li class="list-group-item">
+							  <div class="media">
+							    <div class="media-left">
+							      <a href="#">
+							        <img class="media-object" src="img/a.png" alt="...">
+							      </a>
+							    </div>
+							    <div class="media-body">
+							      <h4 class="media-heading">İsim Soyad</h4>
+							      ...
+							      <div class="pull-right">
+							      
+										<button type="button" class="btn btn-primary">Primary</button>
+										<button type="button" class="btn btn-success">Success</button>
+										<button type="button" class="btn btn-info">Info</button>
+							      </div>
+							    </div>
+							  </div>
+					  </li>-->
+					</ul>
+				</div>
+				</div>
+			    <!--İstekler -->
+			  </div>
+
+		</div>
+
+  
+	</div>
+
+    
+  </body>
+</html>
+
+
